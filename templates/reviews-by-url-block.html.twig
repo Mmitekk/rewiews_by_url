@@ -27,7 +27,7 @@
         {% if title %}
           <h2 class="reviews-by-url-title">{{ title }}</h2>
         {% endif %}
-        {% if not show_all_mode and all_reviews_url %}
+        {% if all_reviews_url %}
           <a href="{{ all_reviews_url }}" class="reviews-by-url-all-btn">Все отзывы</a>
         {% endif %}
       </div>

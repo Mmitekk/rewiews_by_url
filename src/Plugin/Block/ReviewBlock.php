@@ -174,6 +174,7 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
       '#all_reviews_url' => $all_reviews_url,
       '#empty_message' => '',
       '#pager' => [],
+      '#show_all_mode' => FALSE,
       '#css_variables' => $this->buildCssVariables($config),
       '#attached' => [
         'library' => [
