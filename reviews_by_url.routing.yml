@@ -53,3 +53,22 @@ reviews_by_url.settings:
     _permission: 'administer reviews by url'
   options:
     _admin_route: TRUE
+
+# ===== Public "All Reviews" page with path-based pagination =====
+reviews_by_url.all_reviews:
+  path: '/vse-otzyvy'
+  defaults:
+    _controller: '\Drupal\reviews_by_url\Controller\ReviewAllController::listReviews'
+    _title_callback: '\Drupal\reviews_by_url\Controller\ReviewAllController::pageTitle'
+    page: 1
+  requirements:
+    _permission: 'access content'
+
+reviews_by_url.all_reviews_page:
+  path: '/vse-otzyvy/page/{page}'
+  defaults:
+    _controller: '\Drupal\reviews_by_url\Controller\ReviewAllController::listReviews'
+    _title_callback: '\Drupal\reviews_by_url\Controller\ReviewAllController::pageTitle'
+  requirements:
+    _permission: 'access content'
+    page: \d+

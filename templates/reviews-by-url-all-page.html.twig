@@ -1,0 +1,142 @@
+{#
+/**
+ * @file
+ * Template for the "All Reviews" page with path-based pagination.
+ *
+ * Available variables:
+ * - title: The page title.
+ * - items: Array of review items (same structure as block template).
+ * - show_rating: Whether to display star ratings.
+ * - show_date: Whether to display review dates.
+ * - show_city: Whether to display city.
+ * - pager: Pager data array containing:
+ *   - current: Current page number.
+ *   - total: Total number of pages.
+ *   - pages: Array of page items, each with:
+ *     - number: Page number (0 for ellipsis).
+ *     - url: Page URL.
+ *     - is_current: Whether this is the current page.
+ *     - is_ellipsis: Whether this is an ellipsis item.
+ *   - prev_url: URL of previous page (empty if first).
+ *   - next_url: URL of next page (empty if last).
+ *   - first_url: URL of first page.
+ *   - last_url: URL of last page.
+ * - empty_message: Message when no reviews exist.
+ * - css_variables: Inline CSS custom properties string.
+ */
+#}
+
+<div class="reviews-by-url-wrapper reviews-by-url-all-page" style="{{ css_variables }}">
+  <div class="reviews-by-url-container">
+
+    {# Title #}
+    {% if title %}
+      <h1 class="reviews-by-url-title reviews-by-url-title--page">{{ title }}</h1>
+    {% endif %}
+
+    {% if items is not empty %}
+      {# Review cards #}
+      <div class="reviews-by-url-list">
+        {% for item in items %}
+          <div class="reviews-by-url-card" data-review-id="{{ item.id }}">
+
+            {# Top: Avatar + Info #}
+            <div class="reviews-by-url-card__top">
+              <div class="reviews-by-url-card__avatar" aria-hidden="true">
+                {{ item.author_initials }}
+              </div>
+              <div class="reviews-by-url-card__info">
+                <div class="reviews-by-url-card__name-row">
+                  <div>
+                    <span class="reviews-by-url-card__author">{{ item.author_name }}</span>
+                    {% if show_city and item.city %}
+                      <span class="reviews-by-url-card__city">{{ item.city }}</span>
+                    {% endif %}
+                  </div>
+                  {% if show_rating %}
+                    <div class="reviews-by-url-card__rating" aria-label="Рейтинг: {{ item.rating }} из 5">
+                      {% for i in 1..5 %}
+                        {% if i <= item.rating %}
+                          <span class="reviews-by-url-card__star" aria-hidden="true">★</span>
+                        {% else %}
+                          <span class="reviews-by-url-card__star reviews-by-url-card__star--empty" aria-hidden="true">★</span>
+                        {% endif %}
+                      {% endfor %}
+                      <span class="reviews-by-url-card__rating-value">{{ item.rating }}</span>
+                    </div>
+                  {% endif %}
+                </div>
+                {% if show_date and item.date %}
+                  <div class="reviews-by-url-card__date">{{ item.date }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            {# Review text #}
+            <div class="reviews-by-url-card__text">
+              {{ item.review_text|raw }}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      {# Pager #}
+      {% if pager.total > 1 %}
+        <nav class="reviews-by-url-pager" role="navigation" aria-label="Навигация по страницам отзывов">
+          <ul class="reviews-by-url-pager__items">
+
+            {# First page #}
+            {% if pager.current > 2 %}
+              <li class="reviews-by-url-pager__item">
+                <a href="{{ pager.first_url }}" class="reviews-by-url-pager__link reviews-by-url-pager__link--first" aria-label="Первая страница">&laquo;</a>
+              </li>
+            {% endif %}
+
+            {# Previous page #}
+            {% if pager.prev_url %}
+              <li class="reviews-by-url-pager__item">
+                <a href="{{ pager.prev_url }}" class="reviews-by-url-pager__link reviews-by-url-pager__link--prev" aria-label="Предыдущая страница">&lsaquo;</a>
+              </li>
+            {% endif %}
+
+            {# Page numbers #}
+            {% for page in pager.pages %}
+              {% if page.is_ellipsis %}
+                <li class="reviews-by-url-pager__item reviews-by-url-pager__item--ellipsis">
+                  <span class="reviews-by-url-pager__ellipsis">&hellip;</span>
+                </li>
+              {% elseif page.is_current %}
+                <li class="reviews-by-url-pager__item reviews-by-url-pager__item--active">
+                  <span class="reviews-by-url-pager__current" aria-current="page">{{ page.number }}</span>
+                </li>
+              {% else %}
+                <li class="reviews-by-url-pager__item">
+                  <a href="{{ page.url }}" class="reviews-by-url-pager__link">{{ page.number }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+
+            {# Next page #}
+            {% if pager.next_url %}
+              <li class="reviews-by-url-pager__item">
+                <a href="{{ pager.next_url }}" class="reviews-by-url-pager__link reviews-by-url-pager__link--next" aria-label="Следующая страница">&rsaquo;</a>
+              </li>
+            {% endif %}
+
+            {# Last page #}
+            {% if pager.current < pager.total - 1 %}
+              <li class="reviews-by-url-pager__item">
+                <a href="{{ pager.last_url }}" class="reviews-by-url-pager__link reviews-by-url-pager__link--last" aria-label="Последняя страница">&raquo;</a>
+              </li>
+            {% endif %}
+
+          </ul>
+        </nav>
+      {% endif %}
+
+    {% elseif empty_message %}
+      <p class="reviews-by-url-empty-message">{{ empty_message }}</p>
+    {% endif %}
+
+  </div>
+</div>

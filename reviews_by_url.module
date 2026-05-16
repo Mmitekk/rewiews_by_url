@@ -19,10 +19,27 @@ function reviews_by_url_theme($existing, $type, $theme, $path) {
       'variables' => [
         'items' => [],
         'title' => '',
+        'show_rating' => FALSE,
+        'show_date' => FALSE,
+        'show_city' => FALSE,
+        'all_reviews_url' => '',
         'empty_message' => '',
         'css_variables' => '',
       ],
       'template' => 'reviews-by-url-block',
+    ],
+    'reviews_by_url_all_page' => [
+      'variables' => [
+        'items' => [],
+        'title' => '',
+        'show_rating' => FALSE,
+        'show_date' => FALSE,
+        'show_city' => FALSE,
+        'pager' => [],
+        'empty_message' => '',
+        'css_variables' => '',
+      ],
+      'template' => 'reviews-by-url-all-page',
     ],
   ];
 }

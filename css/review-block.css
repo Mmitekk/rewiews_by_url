@@ -331,3 +331,104 @@
   padding: 1rem 0;
   text-align: center;
 }
+
+/* ========================
+   All Reviews Page — Title h1 override
+   ======================== */
+.reviews-by-url-title--page {
+  margin-bottom: 2.4375rem;
+}
+
+/* ========================
+   Pager (Path-based pagination)
+   ======================== */
+.reviews-by-url-pager {
+  margin-top: 2.5rem;
+  text-align: center;
+}
+
+.reviews-by-url-pager__items {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.reviews-by-url-pager__item {
+  margin: 0;
+  padding: 0;
+}
+
+.reviews-by-url-pager__link,
+.reviews-by-url-pager__current,
+.reviews-by-url-pager__ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  padding: 0 0.5rem;
+  font-family: "Roboto", Helvetica, Arial, sans-serif;
+  font-size: 0.875rem;
+  font-weight: bold;
+  border-radius: 0.125rem;
+  transition: all 200ms ease-out;
+  text-decoration: none;
+}
+
+/* Pager link */
+.reviews-by-url-pager__link {
+  color: var(--review-color-author-text);
+  background-color: var(--review-color-card-bg);
+  border: 1px solid var(--review-color-card-border);
+}
+
+.reviews-by-url-pager__link:hover {
+  color: #ffffff;
+  background: linear-gradient(var(--review-color-btn-bg), var(--review-color-btn-bg-end));
+  border-color: transparent;
+  text-decoration: none;
+}
+
+/* Active page */
+.reviews-by-url-pager__current {
+  color: #ffffff;
+  background: linear-gradient(var(--review-color-btn-bg), var(--review-color-btn-bg-end));
+  border: 1px solid transparent;
+}
+
+/* Ellipsis */
+.reviews-by-url-pager__ellipsis {
+  color: var(--review-color-date-text);
+  background: transparent;
+  border: none;
+  min-width: 1.5rem;
+  letter-spacing: 0.125rem;
+}
+
+/* Prev/Next/First/Last arrows */
+.reviews-by-url-pager__link--prev,
+.reviews-by-url-pager__link--next,
+.reviews-by-url-pager__link--first,
+.reviews-by-url-pager__link--last {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+@media (max-width: 768px) {
+  .reviews-by-url-pager__link,
+  .reviews-by-url-pager__current,
+  .reviews-by-url-pager__ellipsis {
+    min-width: 2.25rem;
+    height: 2.25rem;
+    font-size: 0.8125rem;
+  }
+
+  .reviews-by-url-pager {
+    margin-top: 2rem;
+  }
+}
