@@ -158,6 +158,12 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
     // Get URL for "All Reviews" button.
     $all_reviews_url = $config->get('all_reviews_url') ?: '';
 
+    // Hide the "All Reviews" link when we are already on that page
+    // (including pagination paths like /vse-otzyvy/page/2).
+    if (!empty($all_reviews_url) && $this->isOnAllReviewsPage($all_reviews_url)) {
+      $all_reviews_url = '';
+    }
+
     $build = [
       '#theme' => 'reviews_by_url_block',
       '#title' => $config->get('block_title') ?: '',
@@ -323,6 +329,52 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
       ];
     }
     return $items;
+  }
+
+  /**
+   * Checks whether the current page is the "All Reviews" page.
+   *
+   * Compares the current request path against the configured all_reviews_url
+   * and its pagination variants (e.g. /vse-otzyvy, /vse-otzyvy/page/2).
+   *
+   * @param string $all_reviews_url
+   *   The configured URL for the "All Reviews" page (e.g. /vse-otzyvy).
+   *
+   * @return bool
+   *   TRUE if the current page is the "All Reviews" page.
+   */
+  protected function isOnAllReviewsPage($all_reviews_url) {
+    $request = $this->requestStack->getCurrentRequest();
+    if (!$request) {
+      return FALSE;
+    }
+
+    // Normalize the configured URL: ensure leading slash, strip trailing.
+    $normalized_url = trim($all_reviews_url);
+    if (!empty($normalized_url) && !str_starts_with($normalized_url, '/')) {
+      $normalized_url = '/' . $normalized_url;
+    }
+    $normalized_url = rtrim($normalized_url, '/');
+
+    if (empty($normalized_url)) {
+      return FALSE;
+    }
+
+    // Get current request path (what user sees in browser).
+    $current_path = $request->getPathInfo();
+    $current_path = rtrim($current_path, '/');
+
+    // Exact match: /vse-otzyvy.
+    if ($current_path === $normalized_url) {
+      return TRUE;
+    }
+
+    // Pagination match: /vse-otzyvy/page/2, /vse-otzyvy/page/12, etc.
+    if (preg_match('#^' . preg_quote($normalized_url, '#') . '/page/\d+$#', $current_path)) {
+      return TRUE;
+    }
+
+    return FALSE;
   }
 
   /**
