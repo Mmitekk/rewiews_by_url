@@ -106,8 +106,9 @@ class ReviewAllController extends ControllerBase {
     $offset = ($page - 1) * self::REVIEWS_PER_PAGE;
     $query = $this->entityTypeManager->getStorage('review_item')->getQuery();
     $query->condition('status', 1)
-      ->sort('weight', 'ASC')
-      ->sort('id', 'ASC')
+      ->sort('review_date', 'DESC')
+      ->sort('created', 'DESC')
+      ->sort('id', 'DESC')
       ->range($offset, self::REVIEWS_PER_PAGE)
       ->accessCheck(TRUE);
 
