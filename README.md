@@ -15,14 +15,33 @@
 
 ### Через Composer (рекомендуется)
 
+Модуль размещён на GitHub, а не на drupal.org, поэтому перед установкой нужно добавить репозиторий в `composer.json` вашего проекта:
+
+**Шаг 1 — добавить репозиторий** (выполняется один раз):
+
+```bash
+composer config repositories.reviews_by_url vcs https://github.com/Mmitekk/rewiews_by_url
+```
+
+**Шаг 2 — установить модуль:**
+
 ```bash
 composer require mmitekk/reviews_by_url
 ```
 
+**Шаг 3 — включить модуль** на странице `/admin/modules` или через Drush:
+
+```bash
+drush en reviews_by_url -y
+```
+
+> **Почему нужен Шаг 1?** Модули с drupal.org ставятся сразу, потому что Drupal-проект уже содержит репозиторий `packages.drupal.org/8` в `composer.json`. Наш модуль — кастомный и хранится на GitHub, поэтому Composer нужно явно указать, где его искать. Это разовая операция — после добавления репозитория все будущие обновления (`composer update mmitekk/reviews_by_url`) будут работать без дополнительных настроек.
+
 ### Вручную
 
-1. Скопируйте папку модуля в `web/modules/custom/reviews_by_url/`.
-2. Включите модуль на странице `/admin/modules` или через Drush:
+1. Скачайте архив с https://github.com/Mmitekk/rewiews_by_url/archive/refs/tags/v1.0.0.zip
+2. Распакуйте в `web/modules/custom/reviews_by_url/`.
+3. Включите модуль на странице `/admin/modules` или через Drush:
    ```bash
    drush en reviews_by_url -y
    ```
