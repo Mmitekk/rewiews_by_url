@@ -1,0 +1,13 @@
+# Primary tab: список отзывов (активна по умолчанию)
+reviews_by_url.list:
+  title: 'Отзывы'
+  route_name: entity.review_item.collection
+  base_route: entity.review_item.collection
+  weight: 0
+
+# Secondary tab: настройки модуля
+reviews_by_url.settings:
+  title: 'Настройки'
+  route_name: reviews_by_url.settings
+  base_route: entity.review_item.collection
+  weight: 10

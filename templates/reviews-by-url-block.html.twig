@@ -1,0 +1,75 @@
+{#
+/**
+ * @file
+ * Template for the Reviews by URL block.
+ *
+ * Available variables:
+ * - title: The block title.
+ * - items: Array of review items, each containing:
+ *   - id: The review item ID.
+ *   - author_name: The author name.
+ *   - review_text: The rendered review HTML.
+ *   - rating: The rating value (1-5).
+ *   - city: The city name (or empty string).
+ *   - date: The formatted review date (or empty string).
+ * - show_rating: Whether to display star ratings.
+ * - show_date: Whether to display review dates.
+ * - show_city: Whether to display city.
+ * - empty_message: Message to show when no items found.
+ * - css_variables: Inline CSS custom properties string from module config.
+ */
+#}
+
+{% if items is not empty %}
+  <div class="reviews-by-url-wrapper" style="{{ css_variables }}">
+    <div class="reviews-by-url-container">
+      {% if title %}
+        <h2 class="reviews-by-url-title">{{ title }}</h2>
+      {% endif %}
+
+      <div class="reviews-by-url-list">
+        {% for item in items %}
+          <div class="reviews-by-url-card" data-review-id="{{ item.id }}">
+            <div class="reviews-by-url-card__header">
+              <div>
+                <span class="reviews-by-url-card__author">{{ item.author_name }}</span>
+                {% if show_city and item.city %}
+                  <span class="reviews-by-url-card__city">{{ item.city }}</span>
+                {% endif %}
+              </div>
+              {% if show_rating %}
+                <div class="reviews-by-url-card__rating" aria-label="Рейтинг: {{ item.rating }} из 5">
+                  {% for i in 1..5 %}
+                    {% if i <= item.rating %}
+                      <span class="reviews-by-url-card__star" aria-hidden="true"></span>
+                    {% else %}
+                      <span class="reviews-by-url-card__star reviews-by-url-card__star--empty" aria-hidden="true"></span>
+                    {% endif %}
+                  {% endfor %}
+                  <span class="reviews-by-url-card__rating-value">{{ item.rating }}</span>
+                </div>
+              {% endif %}
+            </div>
+
+            {% if show_date and item.date %}
+              <div class="reviews-by-url-card__date">{{ item.date }}</div>
+            {% endif %}
+
+            <div class="reviews-by-url-card__text">
+              {{ item.review_text|raw }}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% elseif empty_message %}
+  <div class="reviews-by-url-wrapper reviews-by-url-wrapper--empty" style="{{ css_variables }}">
+    <div class="reviews-by-url-container">
+      {% if title %}
+        <h2 class="reviews-by-url-title">{{ title }}</h2>
+      {% endif %}
+      <p class="reviews-by-url-empty-message">{{ empty_message }}</p>
+    </div>
+  </div>
+{% endif %}

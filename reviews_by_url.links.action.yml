@@ -1,0 +1,5 @@
+entity.review_item.add_form:
+  title: 'Добавить отзыв'
+  route_name: entity.review_item.add_form
+  appears_on:
+    - entity.review_item.collection

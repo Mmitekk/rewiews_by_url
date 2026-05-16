@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Reviews by URL module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function reviews_by_url_install() {
+  \Drupal::messenger()->addStatus(t('Модуль Reviews by URL установлен. Добавьте отзывы на странице <a href=":url">управления отзывами</a> и разместите блок в Схеме блоков.', [
+    ':url' => '/admin/config/content/reviews-by-url',
+  ]));
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function reviews_by_url_uninstall() {
+  // Clean up any module-specific variables or data.
+  // Configuration is automatically removed by Drupal.
+}

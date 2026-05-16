@@ -1,0 +1,243 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for Reviews by URL module.
+ */
+
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_theme().
+ */
+function reviews_by_url_theme($existing, $type, $theme, $path) {
+  return [
+    'reviews_by_url_block' => [
+      'variables' => [
+        'items' => [],
+        'title' => '',
+        'empty_message' => '',
+        'css_variables' => '',
+      ],
+      'template' => 'reviews-by-url-block',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_entity_base_field_info().
+ *
+ * Defines base fields for the ReviewItem entity type.
+ */
+function reviews_by_url_entity_base_field_info(EntityTypeInterface $entity_type) {
+  if ($entity_type->id() !== 'review_item') {
+    return;
+  }
+
+  $fields = [];
+
+  $fields['author_name'] = BaseFieldDefinition::create('string')
+    ->setLabel(t('Имя автора'))
+    ->setDescription(t('Имя автора отзыва.'))
+    ->setRequired(TRUE)
+    ->setSettings([
+      'max_length' => 255,
+      'text_processing' => 0,
+    ])
+    ->setDisplayOptions('view', [
+      'label' => 'hidden',
+      'type' => 'string',
+      'weight' => 0,
+    ])
+    ->setDisplayOptions('form', [
+      'type' => 'string_textfield',
+      'weight' => 0,
+    ])
+    ->setDisplayConfigurable('form', TRUE)
+    ->setDisplayConfigurable('view', TRUE);
+
+  $fields['review_text'] = BaseFieldDefinition::create('text_long')
+    ->setLabel(t('Текст отзыва'))
+    ->setDescription(t('Текст отзыва. Поддерживает HTML-форматирование.'))
+    ->setRequired(TRUE)
+    ->setSettings([
+      'text_processing' => 1,
+    ])
+    ->setDisplayOptions('view', [
+      'label' => 'hidden',
+      'type' => 'text_default',
+      'weight' => 1,
+    ])
+    ->setDisplayOptions('form', [
+      'type' => 'text_textarea',
+      'weight' => 1,
+      'settings' => [
+        'rows' => 5,
+      ],
+    ])
+    ->setDisplayConfigurable('form', TRUE)
+    ->setDisplayConfigurable('view', TRUE);
+
+  $fields['rating'] = BaseFieldDefinition::create('integer')
+    ->setLabel(t('Рейтинг'))
+    ->setDescription(t('Оценка от 1 до 5 звёзд.'))
+    ->setRequired(TRUE)
+    ->setSettings([
+      'min' => 1,
+      'max' => 5,
+    ])
+    ->setDefaultValue(5)
+    ->setDisplayOptions('view', [
+      'label' => 'hidden',
+      'type' => 'number_integer',
+      'weight' => 2,
+    ])
+    ->setDisplayOptions('form', [
+      'type' => 'number',
+      'weight' => 2,
+      'settings' => [
+        'placeholder' => '5',
+      ],
+    ])
+    ->setDisplayConfigurable('form', TRUE)
+    ->setDisplayConfigurable('view', TRUE);
+
+  $fields['city'] = BaseFieldDefinition::create('string')
+    ->setLabel(t('Город'))
+    ->setDescription(t('Город автора отзыва (необязательно).'))
+    ->setRequired(FALSE)
+    ->setSettings([
+      'max_length' => 255,
+      'text_processing' => 0,
+    ])
+    ->setDisplayOptions('view', [
+      'label' => 'hidden',
+      'type' => 'string',
+      'weight' => 3,
+    ])
+    ->setDisplayOptions('form', [
+      'type' => 'string_textfield',
+      'weight' => 3,
+      'settings' => [
+        'placeholder' => 'Москва',
+      ],
+    ])
+    ->setDisplayConfigurable('form', TRUE)
+    ->setDisplayConfigurable('view', TRUE);
+
+  $fields['review_date'] = BaseFieldDefinition::create('datetime')
+    ->setLabel(t('Дата отзыва'))
+    ->setDescription(t('Дата, указанная в отзыве. Если не указана, используется дата создания.'))
+    ->setRequired(FALSE)
+    ->setSettings([
+      'datetime_type' => 'date',
+    ])
+    ->setDisplayOptions('view', [
+      'label' => 'hidden',
+      'type' => 'datetime_default',
+      'weight' => 4,
+      'settings' => [
+        'format_type' => 'short',
+      ],
+    ])
+    ->setDisplayOptions('form', [
+      'type' => 'datetime_default',
+      'weight' => 4,
+    ])
+    ->setDisplayConfigurable('form', TRUE)
+    ->setDisplayConfigurable('view', TRUE);
+
+  $fields['urls'] = BaseFieldDefinition::create('string')
+    ->setLabel(t('URL страниц'))
+    ->setDescription(t('Укажите внутренние пути страниц сайта (например, /catalog/metallocherepitsa), на которых будет отображаться данный отзыв. Один отзыв может быть привязан к нескольким страницам. Каждый URL — отдельное поле. Для главной страницы используйте &lt;front&gt;. Поддерживаются пути как с начальным слешем (/path), так и без него (path). Поддерживаются псевдонимы URL и маски путей (например, /catalog/*).'))
+    ->setRequired(FALSE)
+    ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
+    ->setSettings([
+      'max_length' => 500,
+    ])
+    ->setDisplayOptions('form', [
+      'type' => 'string_textfield',
+      'weight' => 5,
+      'settings' => [
+        'placeholder' => '/catalog/metallocherepitsa или <front>',
+      ],
+    ])
+    ->setDisplayOptions('view', [
+      'label' => 'above',
+      'type' => 'string',
+      'weight' => 5,
+    ])
+    ->setDisplayConfigurable('form', TRUE)
+    ->setDisplayConfigurable('view', TRUE);
+
+  $fields['status'] = BaseFieldDefinition::create('boolean')
+    ->setLabel(t('Опубликован'))
+    ->setDescription(t('Опубликованный отзыв будет отображаться на соответствующих страницах.'))
+    ->setDefaultValue(TRUE)
+    ->setSettings([
+      'on_label' => t('Да'),
+      'off_label' => t('Нет'),
+    ])
+    ->setDisplayOptions('form', [
+      'type' => 'boolean_checkbox',
+      'weight' => 7,
+      'settings' => [
+        'display_label' => TRUE,
+      ],
+    ])
+    ->setDisplayOptions('view', [
+      'type' => 'boolean',
+      'label' => 'above',
+      'weight' => 7,
+      'settings' => [
+        'format' => 'yes-no',
+      ],
+    ])
+    ->setDisplayConfigurable('form', TRUE)
+    ->setDisplayConfigurable('view', TRUE);
+
+  $fields['weight'] = BaseFieldDefinition::create('integer')
+    ->setLabel(t('Вес (порядок сортировки)'))
+    ->setDescription(t('Меньшее значение — выше в списке. Используется для управления порядком отображения отзывов.'))
+    ->setDefaultValue(0)
+    ->setSettings([
+      'min' => -100,
+      'max' => 100,
+    ])
+    ->setDisplayOptions('form', [
+      'type' => 'number',
+      'weight' => 6,
+      'settings' => [
+        'placeholder' => '0',
+      ],
+    ])
+    ->setDisplayOptions('view', [
+      'label' => 'above',
+      'type' => 'number_integer',
+      'weight' => 6,
+    ])
+    ->setDisplayConfigurable('form', TRUE)
+    ->setDisplayConfigurable('view', TRUE);
+
+  $fields['created'] = BaseFieldDefinition::create('created')
+    ->setLabel(t('Создано'))
+    ->setDescription(t('Дата создания отзыва.'))
+    ->setDisplayOptions('view', [
+      'label' => 'above',
+      'type' => 'timestamp',
+      'weight' => 8,
+    ])
+    ->setDisplayConfigurable('form', FALSE)
+    ->setDisplayConfigurable('view', TRUE);
+
+  $fields['changed'] = BaseFieldDefinition::create('changed')
+    ->setLabel(t('Изменено'))
+    ->setDescription(t('Дата последнего изменения отзыва.'))
+    ->setDisplayConfigurable('form', FALSE)
+    ->setDisplayConfigurable('view', TRUE);
+
+  return $fields;
+}

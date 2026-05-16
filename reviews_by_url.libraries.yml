@@ -1,0 +1,9 @@
+review_block:
+  version: VERSION
+  css:
+    theme:
+      css/review-block.css: {}
+  js:
+    js/review-block.js: {}
+  dependencies:
+    - core/drupal

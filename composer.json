@@ -1,0 +1,42 @@
+{
+  "name": "mmitekk/reviews_by_url",
+  "type": "drupal-custom-module",
+  "description": "Позволяет добавлять отзывы с рейтингом и привязывать их к страницам сайта по URL. Вывод осуществляется через блок в схеме блоков.",
+  "keywords": ["drupal", "reviews", "url", "rating", "block", "отзывы"],
+  "homepage": "https://github.com/Mmitekk/rewiews_by_url",
+  "license": "GPL-2.0-or-later",
+
+  "authors": [
+    {
+      "name": "Mmitekk",
+      "homepage": "https://github.com/Mmitekk",
+      "role": "Maintainer"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/Mmitekk/rewiews_by_url/issues",
+    "source": "https://github.com/Mmitekk/rewiews_by_url"
+  },
+  "require": {
+    "drupal/core": "^9.5 || ^10 || ^11"
+  },
+  "require-dev": {
+    "drupal/devel": "^5"
+  },
+  "suggest": {
+    "drupal/admin_toolbar": "Удобная навигация по админ-меню Drupal"
+  },
+  "extra": {
+    "drupal": {
+      "packageName": "mmitekk/reviews_by_url",
+      "version": "1.0.0",
+      "security-coverage": {
+        "status": "not-covered",
+        "message": "Покрытие безопасность не проверяется для этого модуля."
+      }
+    },
+    "installer-paths": {
+      "web/modules/custom/{$name}": ["type:drupal-custom-module"]
+    }
+  }
+}

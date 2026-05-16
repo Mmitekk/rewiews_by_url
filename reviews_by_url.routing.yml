@@ -1,0 +1,55 @@
+entity.review_item.collection:
+  path: '/admin/config/content/reviews-by-url'
+  defaults:
+    _entity_list: 'review_item'
+    _title: 'Отзывы (Reviews by URL)'
+  requirements:
+    _permission: 'administer reviews by url'
+  options:
+    _admin_route: TRUE
+
+entity.review_item.add_form:
+  path: '/admin/config/content/reviews-by-url/add'
+  defaults:
+    _entity_form: 'review_item.add'
+    _title: 'Добавить отзыв'
+  requirements:
+    _permission: 'administer reviews by url'
+  options:
+    _admin_route: TRUE
+
+entity.review_item.edit_form:
+  path: '/admin/config/content/reviews-by-url/{review_item}/edit'
+  defaults:
+    _entity_form: 'review_item.edit'
+    _title: 'Редактировать отзыв'
+  requirements:
+    _permission: 'administer reviews by url'
+  options:
+    _admin_route: TRUE
+  parameters:
+    review_item:
+      type: 'entity:review_item'
+
+entity.review_item.delete_form:
+  path: '/admin/config/content/reviews-by-url/{review_item}/delete'
+  defaults:
+    _entity_form: 'review_item.delete'
+    _title: 'Удалить отзыв'
+  requirements:
+    _permission: 'administer reviews by url'
+  options:
+    _admin_route: TRUE
+  parameters:
+    review_item:
+      type: 'entity:review_item'
+
+reviews_by_url.settings:
+  path: '/admin/config/content/reviews-by-url/settings'
+  defaults:
+    _form: '\Drupal\reviews_by_url\Form\ReviewSettingsForm'
+    _title: 'Настройки Reviews by URL'
+  requirements:
+    _permission: 'administer reviews by url'
+  options:
+    _admin_route: TRUE

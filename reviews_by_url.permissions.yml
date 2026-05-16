@@ -1,0 +1,4 @@
+administer reviews by url:
+  title: 'Администрирование Reviews by URL'
+  description: 'Создание, редактирование и удаление отзывов, а также управление настройками модуля.'
+  restrict access: true

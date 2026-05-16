@@ -1,0 +1,13 @@
+reviews_by_url.admin:
+  title: 'Отзывы (Reviews by URL)'
+  description: 'Управление отзывами с привязкой к URL страниц.'
+  parent: system.admin_config_content
+  route_name: entity.review_item.collection
+  weight: 100
+
+reviews_by_url.settings:
+  title: 'Настройки Reviews by URL'
+  description: 'Настройки модуля Reviews by URL.'
+  parent: reviews_by_url.admin
+  route_name: reviews_by_url.settings
+  weight: 101

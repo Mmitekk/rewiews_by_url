@@ -1,0 +1,46 @@
+reviews_by_url.settings:
+  type: config_object
+  label: 'Reviews by URL settings'
+  mapping:
+    block_title:
+      type: string
+      label: 'Заголовок блока отзывов'
+    empty_message:
+      type: string
+      label: 'Сообщение при отсутствии отзывов'
+    show_rating:
+      type: boolean
+      label: 'Показывать рейтинг (звёзды)'
+    show_date:
+      type: boolean
+      label: 'Показывать дату отзыва'
+    show_city:
+      type: boolean
+      label: 'Показывать город'
+    color_accent:
+      type: string
+      label: 'Акцентный цвет (синий)'
+    color_author_text:
+      type: string
+      label: 'Цвет имени автора'
+    color_review_text:
+      type: string
+      label: 'Цвет текста отзыва'
+    color_border:
+      type: string
+      label: 'Цвет разделительных линий'
+    color_date_text:
+      type: string
+      label: 'Цвет даты'
+    color_star:
+      type: string
+      label: 'Цвет звёзд рейтинга'
+    color_card_bg:
+      type: string
+      label: 'Фон карточки отзыва'
+    color_card_border:
+      type: string
+      label: 'Цвет бордюра карточки'
+    color_section_bg:
+      type: string
+      label: 'Фон секции'

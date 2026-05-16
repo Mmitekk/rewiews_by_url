@@ -1,0 +1,268 @@
+/**
+ * @file
+ * Styles for the Reviews by URL block.
+ *
+ * Styled to match krovkomp.ru design language:
+ * - Primary blue accent (#157fed)
+ * - Gold star ratings (#d89c11)
+ * - White cards on light gray backgrounds
+ * - 3px solid blue border (top mobile, left desktop)
+ * - Roboto font family
+ * - Subtle box shadows
+ * - Sharp corners (border-radius: 0)
+ *
+ * All visual colors are controlled via CSS custom properties (variables)
+ * that are set inline on the .reviews-by-url-wrapper element from the
+ * module's configuration. This allows per-site color customization
+ * without modifying CSS files.
+ */
+
+/* ========================
+   CSS Custom Properties (defaults)
+   Overridden inline from module config.
+   ======================== */
+.reviews-by-url-wrapper {
+  --review-color-accent: #157fed;
+  --review-color-author-text: #333333;
+  --review-color-review-text: #333333;
+  --review-color-border: #eeeeee;
+  --review-color-date-text: #999999;
+  --review-color-star: #d89c11;
+  --review-color-card-bg: #ffffff;
+  --review-color-card-border: #157fed;
+  --review-color-section-bg: #f2f2f2;
+}
+
+/* ========================
+   Wrapper (Section)
+   ======================== */
+.reviews-by-url-wrapper {
+  background-color: var(--review-color-section-bg);
+  padding: 5rem 1rem;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.reviews-by-url-wrapper--empty {
+  padding: 3rem 1rem;
+}
+
+@media (max-width: 768px) {
+  .reviews-by-url-wrapper {
+    padding: 4rem 1rem;
+  }
+}
+
+/* Inner container to limit max-width */
+.reviews-by-url-container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* ========================
+   Title
+   ======================== */
+.reviews-by-url-title {
+  margin: 0 0 2.4375rem 0;
+  padding: 0;
+  font-family: "Roboto", Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  font-size: 1.875rem;
+  line-height: 1.1;
+  color: var(--review-color-accent);
+}
+
+@media (max-width: 768px) {
+  .reviews-by-url-title {
+    margin-bottom: 1.875rem;
+    font-size: 1.5rem;
+  }
+}
+
+/* ========================
+   Review Cards List
+   ======================== */
+.reviews-by-url-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.875rem;
+}
+
+@media (min-width: 768px) {
+  .reviews-by-url-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 992px) {
+  .reviews-by-url-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.1875rem;
+  }
+}
+
+/* ========================
+   Review Card
+   ======================== */
+.reviews-by-url-card {
+  background-color: var(--review-color-card-bg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.875rem;
+  border-top: 3px solid var(--review-color-card-border);
+  transition: all 200ms ease-out;
+  position: relative;
+}
+
+.reviews-by-url-card:hover {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+@media (min-width: 992px) {
+  .reviews-by-url-card {
+    padding: 3.75rem;
+    border-left: 3px solid var(--review-color-card-border);
+    border-top: 0;
+  }
+}
+
+/* ========================
+   Card Header (Author + Rating row)
+   ======================== */
+.reviews-by-url-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  margin-bottom: 0.5rem;
+}
+
+/* ========================
+   Author Name
+   ======================== */
+.reviews-by-url-card__author {
+  font-family: "Roboto", Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  color: var(--review-color-author-text);
+  font-size: 0.9375rem;
+  line-height: 1.35;
+  margin: 0;
+}
+
+/* ========================
+   City
+   ======================== */
+.reviews-by-url-card__city {
+  font-family: "Roboto", Helvetica, Arial, sans-serif;
+  font-weight: normal;
+  color: var(--review-color-date-text);
+  font-size: 0.8125rem;
+  margin-left: 0.5rem;
+}
+
+/* ========================
+   Star Rating
+   ======================== */
+.reviews-by-url-card__rating {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  font-size: 0.875rem;
+}
+
+.reviews-by-url-card__star {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  position: relative;
+  font-style: normal;
+}
+
+.reviews-by-url-card__star::before {
+  content: "★";
+  color: var(--review-color-star);
+  font-size: 1em;
+  line-height: 1;
+}
+
+.reviews-by-url-card__star--empty::before {
+  content: "☆";
+  color: var(--review-color-star);
+  opacity: 0.4;
+}
+
+.reviews-by-url-card__rating-value {
+  font-family: "Roboto", Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  color: var(--review-color-author-text);
+  font-size: 0.875rem;
+  margin-left: 0.375rem;
+}
+
+/* ========================
+   Date
+   ======================== */
+.reviews-by-url-card__date {
+  font-family: "Roboto", Helvetica, Arial, sans-serif;
+  font-size: 0.875rem;
+  color: var(--review-color-date-text);
+  margin-bottom: 1.25rem;
+}
+
+/* ========================
+   Review Text
+   ======================== */
+.reviews-by-url-card__text {
+  border-top: 1px solid var(--review-color-border);
+  padding-top: 1.25rem;
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--review-color-review-text);
+}
+
+.reviews-by-url-card__text p {
+  margin: 0 0 10px 0;
+}
+
+.reviews-by-url-card__text p:last-child {
+  margin-bottom: 0;
+}
+
+.reviews-by-url-card__text ul,
+.reviews-by-url-card__text ol {
+  margin: 8px 0;
+  padding-left: 24px;
+}
+
+.reviews-by-url-card__text li {
+  margin-bottom: 6px;
+}
+
+.reviews-by-url-card__text a {
+  color: var(--review-color-accent);
+  text-decoration: underline;
+  text-decoration-color: rgba(21, 127, 237, 0.3);
+  transition: text-decoration-color 0.2s ease;
+}
+
+.reviews-by-url-card__text a:hover {
+  text-decoration-color: var(--review-color-accent);
+}
+
+.reviews-by-url-card__text strong {
+  color: var(--review-color-author-text);
+}
+
+/* ========================
+   Empty message
+   ======================== */
+.reviews-by-url-empty-message {
+  font-size: 0.875rem;
+  color: var(--review-color-date-text);
+  font-style: italic;
+  margin: 0;
+  padding: 1rem 0;
+  text-align: center;
+}
