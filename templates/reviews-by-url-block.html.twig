@@ -6,24 +6,20 @@
  * Available variables:
  * - title: The block title.
  * - items: Array of review items, each containing:
- *   - id: The review item ID.
- *   - author_name: The author name.
- *   - author_initials: The author initials (1-2 chars) for avatar.
- *   - review_text: The rendered review HTML.
- *   - rating: The rating value (1-5).
- *   - city: The city name (or empty string).
- *   - date: The formatted review date (or empty string).
+ *   - id, author_name, author_initials, review_text, rating, city, date
  * - show_rating: Whether to display star ratings.
  * - show_date: Whether to display review dates.
  * - show_city: Whether to display city.
  * - all_reviews_url: URL for "All Reviews" button (or empty).
  * - empty_message: Message to show when no items found.
+ * - pager: Pager data array (for show_all mode).
+ * - show_all_mode: Whether this is "All Reviews" mode with AJAX pagination.
  * - css_variables: Inline CSS custom properties string from module config.
  */
 #}
 
 {% if items is not empty %}
-  <div class="reviews-by-url-wrapper" style="{{ css_variables }}">
+  <div class="reviews-by-url-wrapper{% if show_all_mode %} reviews-by-url-wrapper--all{% endif %}" style="{{ css_variables }}" {% if show_all_mode %}data-show-all="true"{% endif %}>
     <div class="reviews-by-url-container">
 
       {# Header: Title + "All Reviews" button #}
@@ -31,13 +27,13 @@
         {% if title %}
           <h2 class="reviews-by-url-title">{{ title }}</h2>
         {% endif %}
-        {% if all_reviews_url %}
+        {% if not show_all_mode and all_reviews_url %}
           <a href="{{ all_reviews_url }}" class="reviews-by-url-all-btn">Все отзывы</a>
         {% endif %}
       </div>
 
       {# Review cards #}
-      <div class="reviews-by-url-list">
+      <div class="reviews-by-url-list" {% if show_all_mode %}data-reviews-list="true"{% endif %}>
         {% for item in items %}
           <div class="reviews-by-url-card" data-review-id="{{ item.id }}">
 
@@ -83,6 +79,61 @@
           </div>
         {% endfor %}
       </div>
+
+      {# AJAX Pager (only in show_all mode) #}
+      {% if show_all_mode and pager.total > 1 %}
+        <nav class="reviews-by-url-pager" role="navigation" aria-label="Навигация по страницам отзывов" data-reviews-pager="true">
+          <ul class="reviews-by-url-pager__items">
+
+            {# First page #}
+            {% if pager.current > 2 %}
+              <li class="reviews-by-url-pager__item">
+                <a href="#" class="reviews-by-url-pager__link reviews-by-url-pager__link--first" data-page="1" aria-label="Первая страница">&laquo;</a>
+              </li>
+            {% endif %}
+
+            {# Previous page #}
+            {% if pager.current > 1 %}
+              <li class="reviews-by-url-pager__item">
+                <a href="#" class="reviews-by-url-pager__link reviews-by-url-pager__link--prev" data-page="{{ pager.current - 1 }}" aria-label="Предыдущая страница">&lsaquo;</a>
+              </li>
+            {% endif %}
+
+            {# Page numbers #}
+            {% for page in pager.pages %}
+              {% if page.is_ellipsis %}
+                <li class="reviews-by-url-pager__item reviews-by-url-pager__item--ellipsis">
+                  <span class="reviews-by-url-pager__ellipsis">&hellip;</span>
+                </li>
+              {% elseif page.is_current %}
+                <li class="reviews-by-url-pager__item reviews-by-url-pager__item--active">
+                  <span class="reviews-by-url-pager__current" aria-current="page" data-page="{{ page.number }}">{{ page.number }}</span>
+                </li>
+              {% else %}
+                <li class="reviews-by-url-pager__item">
+                  <a href="#" class="reviews-by-url-pager__link" data-page="{{ page.number }}">{{ page.number }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+
+            {# Next page #}
+            {% if pager.current < pager.total %}
+              <li class="reviews-by-url-pager__item">
+                <a href="#" class="reviews-by-url-pager__link reviews-by-url-pager__link--next" data-page="{{ pager.current + 1 }}" aria-label="Следующая страница">&rsaquo;</a>
+              </li>
+            {% endif %}
+
+            {# Last page #}
+            {% if pager.current < pager.total - 1 %}
+              <li class="reviews-by-url-pager__item">
+                <a href="#" class="reviews-by-url-pager__link reviews-by-url-pager__link--last" data-page="{{ pager.total }}" aria-label="Последняя страница">&raquo;</a>
+              </li>
+            {% endif %}
+
+          </ul>
+        </nav>
+      {% endif %}
+
     </div>
   </div>
 {% elseif empty_message %}

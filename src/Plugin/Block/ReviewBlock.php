@@ -58,6 +58,11 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
   protected $pathMatcher;
 
   /**
+   * Number of reviews per page for "show all" mode.
+   */
+  const REVIEWS_PER_PAGE = 12;
+
+  /**
    * Constructs a ReviewBlock object.
    */
   public function __construct(
@@ -100,7 +105,28 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
   public function defaultConfiguration() {
     return [
       'label_display' => FALSE,
+      'show_all' => FALSE,
     ] + parent::defaultConfiguration();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function blockForm($form, \Drupal\Core\Form\FormStateInterface $form_state) {
+    $form['show_all'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Показать все отзывы (режим «Все отзывы»)'),
+      '#description' => $this->t('Если включено, блок будет выводить ВСЕ опубликованные отзывы с пагинацией (по 12 штук на страницу), без фильтрации по текущему URL. Пагинация работает через AJAX — URL страницы не изменяется. Разместите этот блок на странице «Все отзывы».'),
+      '#default_value' => $this->configuration['show_all'] ?? FALSE,
+    ];
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function blockSubmit($form, \Drupal\Core\Form\FormStateInterface $form_state) {
+    $this->configuration['show_all'] = (bool) $form_state->getValue('show_all');
   }
 
   /**
@@ -108,6 +134,13 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
    */
   public function build() {
     $config = \Drupal::config('reviews_by_url.settings');
+
+    // If "show_all" mode is enabled, load ALL reviews with AJAX pagination.
+    if (!empty($this->configuration['show_all'])) {
+      return $this->buildAllReviews($config);
+    }
+
+    // Default behavior: filter reviews by current page URL.
     $current_urls = $this->getCurrentUrls();
 
     if (empty($current_urls)) {
@@ -120,6 +153,122 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
       return $this->buildEmpty($config);
     }
 
+    $items = $this->buildReviewItems($review_items, $config);
+
+    // Get URL for "All Reviews" button.
+    $all_reviews_url = $config->get('all_reviews_url') ?: '';
+
+    $build = [
+      '#theme' => 'reviews_by_url_block',
+      '#title' => $config->get('block_title') ?: '',
+      '#items' => $items,
+      '#show_rating' => $config->get('show_rating') ? TRUE : FALSE,
+      '#show_date' => $config->get('show_date') ? TRUE : FALSE,
+      '#show_city' => $config->get('show_city') ? TRUE : FALSE,
+      '#all_reviews_url' => $all_reviews_url,
+      '#empty_message' => '',
+      '#pager' => [],
+      '#css_variables' => $this->buildCssVariables($config),
+      '#attached' => [
+        'library' => [
+          'reviews_by_url/review_block',
+        ],
+      ],
+      '#cache' => [
+        'contexts' => ['url.path', 'url.query_args'],
+        'tags' => ['review_item_list'],
+        'max-age' => 3600,
+      ],
+    ];
+
+    return $build;
+  }
+
+  /**
+   * Builds the "All Reviews" variant with AJAX pagination.
+   *
+   * @param \Drupal\Core\Config\ImmutableConfig $config
+   *   The module configuration.
+   *
+   * @return array
+   *   A render array.
+   */
+  protected function buildAllReviews($config) {
+    // Count total published reviews.
+    $count_query = $this->entityTypeManager->getStorage('review_item')->getQuery();
+    $count_query->condition('status', 1)->accessCheck(TRUE);
+    $total = $count_query->count()->execute();
+
+    if ($total === 0) {
+      return $this->buildEmpty($config);
+    }
+
+    $total_pages = (int) ceil($total / self::REVIEWS_PER_PAGE);
+
+    // Load ALL published reviews (first page for initial load).
+    // AJAX pagination will request subsequent pages.
+    $query = $this->entityTypeManager->getStorage('review_item')->getQuery();
+    $query->condition('status', 1)
+      ->sort('weight', 'ASC')
+      ->sort('id', 'ASC')
+      ->range(0, self::REVIEWS_PER_PAGE)
+      ->accessCheck(TRUE);
+
+    $ids = $query->execute();
+    $review_items = $this->entityTypeManager->getStorage('review_item')->loadMultiple($ids);
+
+    $items = $this->buildReviewItems($review_items, $config);
+
+    // Build pager data.
+    $pager = $this->buildPager(1, $total_pages);
+
+    $build = [
+      '#theme' => 'reviews_by_url_block',
+      '#title' => $config->get('block_title') ?: '',
+      '#items' => $items,
+      '#show_rating' => $config->get('show_rating') ? TRUE : FALSE,
+      '#show_date' => $config->get('show_date') ? TRUE : FALSE,
+      '#show_city' => $config->get('show_city') ? TRUE : FALSE,
+      '#all_reviews_url' => '',
+      '#empty_message' => '',
+      '#pager' => $pager,
+      '#show_all_mode' => TRUE,
+      '#css_variables' => $this->buildCssVariables($config),
+      '#attached' => [
+        'library' => [
+          'reviews_by_url/review_block',
+        ],
+        'drupalSettings' => [
+          'reviewsByUrl' => [
+            'showAllMode' => TRUE,
+            'perPage' => self::REVIEWS_PER_PAGE,
+            'totalPages' => $total_pages,
+            'ajaxUrl' => '/reviews-by-url/ajax/page',
+          ],
+        ],
+      ],
+      '#cache' => [
+        'contexts' => ['url.path'],
+        'tags' => ['review_item_list'],
+        'max-age' => 3600,
+      ],
+    ];
+
+    return $build;
+  }
+
+  /**
+   * Builds review items array from loaded entities.
+   *
+   * @param \Drupal\reviews_by_url\Entity\ReviewItemInterface[] $review_items
+   *   Array of review item entities.
+   * @param \Drupal\Core\Config\ImmutableConfig $config
+   *   The module configuration.
+   *
+   * @return array
+   *   Array of review item data for the template.
+   */
+  protected function buildReviewItems(array $review_items, $config) {
     $items = [];
     foreach ($review_items as $review_item) {
       $review_render = [
@@ -172,33 +321,7 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
         'date' => $review_date,
       ];
     }
-
-    // Get URL for "All Reviews" button.
-    $all_reviews_url = $config->get('all_reviews_url') ?: '';
-
-    $build = [
-      '#theme' => 'reviews_by_url_block',
-      '#title' => $config->get('block_title') ?: '',
-      '#items' => $items,
-      '#show_rating' => $config->get('show_rating') ? TRUE : FALSE,
-      '#show_date' => $config->get('show_date') ? TRUE : FALSE,
-      '#show_city' => $config->get('show_city') ? TRUE : FALSE,
-      '#all_reviews_url' => $all_reviews_url,
-      '#empty_message' => '',
-      '#css_variables' => $this->buildCssVariables($config),
-      '#attached' => [
-        'library' => [
-          'reviews_by_url/review_block',
-        ],
-      ],
-      '#cache' => [
-        'contexts' => ['url.path', 'url.query_args'],
-        'tags' => ['review_item_list'],
-        'max-age' => 3600,
-      ],
-    ];
-
-    return $build;
+    return $items;
   }
 
   /**
@@ -230,6 +353,8 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
       '#show_date' => FALSE,
       '#show_city' => FALSE,
       '#empty_message' => $empty_message,
+      '#pager' => [],
+      '#show_all_mode' => FALSE,
       '#css_variables' => $this->buildCssVariables($config),
       '#attached' => [
         'library' => [
@@ -241,6 +366,92 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
         'tags' => ['review_item_list'],
         'max-age' => 3600,
       ],
+    ];
+  }
+
+  /**
+   * Builds pager data for AJAX-based pagination.
+   *
+   * @param int $current_page
+   *   Current page number (1-based).
+   * @param int $total_pages
+   *   Total number of pages.
+   *
+   * @return array
+   *   Pager data array.
+   */
+  protected function buildPager($current_page, $total_pages) {
+    if ($total_pages <= 1) {
+      return [
+        'current' => 1,
+        'total' => 1,
+        'pages' => [],
+      ];
+    }
+
+    $pages = [];
+
+    // Always show first page.
+    $pages[] = [
+      'number' => 1,
+      'url' => '',
+      'is_current' => $current_page === 1,
+      'is_ellipsis' => FALSE,
+    ];
+
+    // Calculate range of pages to show around current.
+    $range = 2;
+    $start = max(2, $current_page - $range);
+    $end = min($total_pages - 1, $current_page + $range);
+
+    // Ellipsis after first page.
+    if ($start > 2) {
+      $pages[] = [
+        'number' => 0,
+        'url' => '',
+        'is_current' => FALSE,
+        'is_ellipsis' => TRUE,
+      ];
+    }
+
+    // Middle pages.
+    for ($i = $start; $i <= $end; $i++) {
+      $pages[] = [
+        'number' => $i,
+        'url' => '',
+        'is_current' => $current_page === $i,
+        'is_ellipsis' => FALSE,
+      ];
+    }
+
+    // Ellipsis before last page.
+    if ($end < $total_pages - 1) {
+      $pages[] = [
+        'number' => 0,
+        'url' => '',
+        'is_current' => FALSE,
+        'is_ellipsis' => TRUE,
+      ];
+    }
+
+    // Always show last page (if more than 1 page).
+    if ($total_pages > 1) {
+      $pages[] = [
+        'number' => $total_pages,
+        'url' => '',
+        'is_current' => $current_page === $total_pages,
+        'is_ellipsis' => FALSE,
+      ];
+    }
+
+    return [
+      'current' => $current_page,
+      'total' => $total_pages,
+      'pages' => $pages,
+      'prev_url' => '',
+      'next_url' => '',
+      'first_url' => '',
+      'last_url' => '',
     ];
   }
 

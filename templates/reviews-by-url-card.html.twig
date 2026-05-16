@@ -1,0 +1,55 @@
+{#
+/**
+ * @file
+ * Template for a single review card (used by AJAX controller).
+ *
+ * Available variables:
+ * - item: Review item data containing:
+ *   - id, author_name, author_initials, review_text, rating, city, date
+ * - show_rating: Whether to display star ratings.
+ * - show_date: Whether to display review dates.
+ * - show_city: Whether to display city.
+ */
+#}
+<div class="reviews-by-url-card" data-review-id="{{ item.id }}">
+
+  {# Top: Avatar + Info #}
+  <div class="reviews-by-url-card__top">
+    <div class="reviews-by-url-card__avatar" aria-hidden="true">
+      {{ item.author_initials }}
+    </div>
+    <div class="reviews-by-url-card__info">
+      {# Left column: Name + City | Right column: Rating + Date #}
+      <div class="reviews-by-url-card__name-row">
+        <div class="reviews-by-url-card__left">
+          <span class="reviews-by-url-card__author">{{ item.author_name }}</span>
+          {% if show_city and item.city %}
+            <span class="reviews-by-url-card__city">{{ item.city }}</span>
+          {% endif %}
+        </div>
+        <div class="reviews-by-url-card__right">
+          {% if show_rating %}
+            <div class="reviews-by-url-card__rating" aria-label="Рейтинг: {{ item.rating }} из 5">
+              {% for i in 1..5 %}
+                {% if i <= item.rating %}
+                  <span class="reviews-by-url-card__star" aria-hidden="true">★</span>
+                {% else %}
+                  <span class="reviews-by-url-card__star reviews-by-url-card__star--empty" aria-hidden="true">★</span>
+                {% endif %}
+              {% endfor %}
+              <span class="reviews-by-url-card__rating-value">{{ item.rating }}</span>
+            </div>
+          {% endif %}
+          {% if show_date and item.date %}
+            <div class="reviews-by-url-card__date">{{ item.date }}</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# Review text #}
+  <div class="reviews-by-url-card__text">
+    {{ item.review_text|raw }}
+  </div>
+</div>

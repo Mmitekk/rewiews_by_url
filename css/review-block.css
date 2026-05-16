@@ -438,3 +438,17 @@
     margin-top: 2rem;
   }
 }
+
+/* ========================
+   AJAX Loading State
+   ======================== */
+.reviews-by-url-list--loading {
+  opacity: 0.5;
+  transition: opacity 200ms ease-out;
+  pointer-events: none;
+}
+
+/* Cursor pointer for AJAX pager links */
+[data-reviews-pager] .reviews-by-url-pager__link {
+  cursor: pointer;
+}

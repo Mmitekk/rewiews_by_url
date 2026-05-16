@@ -24,9 +24,20 @@ function reviews_by_url_theme($existing, $type, $theme, $path) {
         'show_city' => FALSE,
         'all_reviews_url' => '',
         'empty_message' => '',
+        'pager' => [],
+        'show_all_mode' => FALSE,
         'css_variables' => '',
       ],
       'template' => 'reviews-by-url-block',
+    ],
+    'reviews_by_url_card' => [
+      'variables' => [
+        'item' => [],
+        'show_rating' => FALSE,
+        'show_date' => FALSE,
+        'show_city' => FALSE,
+      ],
+      'template' => 'reviews-by-url-card',
     ],
     'reviews_by_url_all_page' => [
       'variables' => [

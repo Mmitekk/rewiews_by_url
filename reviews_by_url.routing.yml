@@ -72,3 +72,13 @@ reviews_by_url.all_reviews_page:
   requirements:
     _permission: 'access content'
     page: \d+
+
+# ===== AJAX endpoint for block pagination =====
+reviews_by_url.ajax_page:
+  path: '/reviews-by-url/ajax/page/{page}'
+  defaults:
+    _controller: '\Drupal\reviews_by_url\Controller\ReviewAjaxController::getPage'
+    page: 1
+  requirements:
+    _permission: 'access content'
+    page: \d+
