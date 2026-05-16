@@ -82,10 +82,64 @@ class ReviewSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('show_city') ?? TRUE,
     ];
 
+    // ===== Button settings =====
+    $form['button'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Кнопка «Все отзывы»'),
+      '#description' => $this->t('Настройте внешний вид кнопки ссылки на страницу всех отзывов.'),
+    ];
+
+    $form['button']['btn_text'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Текст кнопки'),
+      '#description' => $this->t('Текст, отображаемый на кнопке. По умолчанию: «Все отзывы».'),
+      '#default_value' => $config->get('btn_text') ?? 'Все отзывы',
+      '#maxlength' => 255,
+      '#placeholder' => 'Все отзывы',
+    ];
+
+    $form['button']['btn_bg_start'] = [
+      '#type' => 'color',
+      '#title' => $this->t('Цвет фона кнопки (начало градиента)'),
+      '#description' => $this->t('Начальный цвет градиента кнопки. Если нужен однотонный цвет — укажите одинаковые значения для начала и конца градиента.'),
+      '#default_value' => $config->get('btn_bg_start') ?? '#0780bf',
+    ];
+
+    $form['button']['btn_bg_end'] = [
+      '#type' => 'color',
+      '#title' => $this->t('Цвет фона кнопки (конец градиента)'),
+      '#description' => $this->t('Конечный цвет градиента кнопки.'),
+      '#default_value' => $config->get('btn_bg_end') ?? '#107286',
+    ];
+
+    $form['button']['btn_text_color'] = [
+      '#type' => 'color',
+      '#title' => $this->t('Цвет текста кнопки'),
+      '#description' => $this->t('Цвет текста на кнопке. Обычно белый (#ffffff) или светлый на тёмном фоне.'),
+      '#default_value' => $config->get('btn_text_color') ?? '#ffffff',
+    ];
+
+    $form['button']['btn_hover_bg'] = [
+      '#type' => 'color',
+      '#title' => $this->t('Цвет фона при наведении'),
+      '#description' => $this->t('Цвет кнопки при наведении курсора. Градиент отключается, кнопка становится однотонной.'),
+      '#default_value' => $config->get('btn_hover_bg') ?? '#ca9210',
+    ];
+
+    $form['button']['btn_border_radius'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Скругление углов (px)'),
+      '#description' => $this->t('Радиус скругления углов кнопки в пикселях. 0 — прямоугольная, 4–8 — слегка скруглённая, 20–30 — сильно скруглённая, 999 — в форме таблетки (pill).'),
+      '#default_value' => $config->get('btn_border_radius') ?? 2,
+      '#min' => 0,
+      '#max' => 999,
+      '#field_suffix' => 'px',
+    ];
+
     // ===== Colors =====
     $form['colors'] = [
       '#type' => 'fieldset',
-      '#title' => $this->t('Цвета и оформление'),
+      '#title' => $this->t('Цвета и оформление карточек'),
       '#description' => $this->t('Настройте цвета блока отзывов под дизайн вашего сайта. Оставьте поле пустым, чтобы использовать значение по умолчанию. Формат: HEX (например, #157fed).'),
     ];
 
@@ -175,6 +229,12 @@ class ReviewSettingsForm extends ConfigFormBase {
       ->set('show_rating', $form_state->getValue('show_rating'))
       ->set('show_date', $form_state->getValue('show_date'))
       ->set('show_city', $form_state->getValue('show_city'))
+      ->set('btn_text', $form_state->getValue('btn_text'))
+      ->set('btn_bg_start', $form_state->getValue('btn_bg_start'))
+      ->set('btn_bg_end', $form_state->getValue('btn_bg_end'))
+      ->set('btn_text_color', $form_state->getValue('btn_text_color'))
+      ->set('btn_hover_bg', $form_state->getValue('btn_hover_bg'))
+      ->set('btn_border_radius', $form_state->getValue('btn_border_radius'))
       ->set('color_accent', $form_state->getValue('color_accent'))
       ->set('color_author_text', $form_state->getValue('color_author_text'))
       ->set('color_review_text', $form_state->getValue('color_review_text'))

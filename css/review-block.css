@@ -31,7 +31,9 @@
   --review-color-section-bg: #f2f2f2;
   --review-color-btn-bg: #0780bf;
   --review-color-btn-bg-end: #107286;
+  --review-color-btn-text: #ffffff;
   --review-color-btn-hover: #ca9210;
+  --review-btn-radius: 2px;
 }
 
 /* ========================
@@ -90,13 +92,13 @@
 .reviews-by-url-all-btn {
   display: inline-block;
   background: linear-gradient(var(--review-color-btn-bg), var(--review-color-btn-bg-end));
-  color: #ffffff;
+  color: var(--review-color-btn-text);
   font-family: "Roboto", Helvetica, Arial, sans-serif;
   font-size: max(12px, 0.875rem);
   font-weight: bold;
   text-shadow: 0 1px rgba(0, 0, 0, 0.15);
   padding: 0.9375rem 1.875rem;
-  border-radius: 0.125rem;
+  border-radius: var(--review-btn-radius);
   text-decoration: none;
   text-transform: uppercase;
   border: 0;
@@ -107,7 +109,7 @@
 
 .reviews-by-url-all-btn:hover {
   background: var(--review-color-btn-hover);
-  color: #ffffff;
+  color: var(--review-color-btn-text);
   text-decoration: none;
 }
 
@@ -381,7 +383,7 @@
   font-family: "Roboto", Helvetica, Arial, sans-serif;
   font-size: max(12px, 0.875rem);
   font-weight: bold;
-  border-radius: 0.125rem;
+  border-radius: var(--review-btn-radius);
   transition: all 200ms ease-out;
   text-decoration: none;
 }
@@ -394,7 +396,7 @@
 }
 
 .reviews-by-url-pager__link:hover {
-  color: #ffffff;
+  color: var(--review-color-btn-text);
   background: linear-gradient(var(--review-color-btn-bg), var(--review-color-btn-bg-end));
   border-color: transparent;
   text-decoration: none;
@@ -402,7 +404,7 @@
 
 /* Active page */
 .reviews-by-url-pager__current {
-  color: #ffffff;
+  color: var(--review-color-btn-text);
   background: linear-gradient(var(--review-color-btn-bg), var(--review-color-btn-bg-end));
   border: 1px solid transparent;
 }

@@ -11,6 +11,7 @@
  * - show_date: Whether to display review dates.
  * - show_city: Whether to display city.
  * - all_reviews_url: URL for "All Reviews" button (or empty).
+ * - btn_text: Text label for the "All Reviews" button.
  * - empty_message: Message to show when no items found.
  * - pager: Pager data array (for show_all mode).
  * - show_all_mode: Whether this is "All Reviews" mode with AJAX pagination.
@@ -28,7 +29,7 @@
           <h2 class="reviews-by-url-title">{{ title }}</h2>
         {% endif %}
         {% if all_reviews_url %}
-          <a href="{{ all_reviews_url }}" class="reviews-by-url-all-btn">Все отзывы</a>
+          <a href="{{ all_reviews_url }}" class="reviews-by-url-all-btn">{{ btn_text }}</a>
         {% endif %}
       </div>
 

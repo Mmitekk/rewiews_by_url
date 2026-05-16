@@ -33,3 +33,33 @@ function reviews_by_url_update_10001() {
   }
   return t('Ключ all_reviews_url уже существует в конфигурации.');
 }
+
+/**
+ * Add button styling config keys (text, colors, border-radius).
+ */
+function reviews_by_url_update_10002() {
+  $config = \Drupal::configFactory()->getEditable('reviews_by_url.settings');
+
+  $defaults = [
+    'btn_text' => 'Все отзывы',
+    'btn_bg_start' => '#0780bf',
+    'btn_bg_end' => '#107286',
+    'btn_text_color' => '#ffffff',
+    'btn_hover_bg' => '#ca9210',
+    'btn_border_radius' => 2,
+  ];
+
+  $added = [];
+  foreach ($defaults as $key => $value) {
+    if ($config->get($key) === NULL) {
+      $config->set($key, $value);
+      $added[] = $key;
+    }
+  }
+
+  if (!empty($added)) {
+    $config->save();
+    return t('Добавлены настройки кнопки: @keys', ['@keys' => implode(', ', $added)]);
+  }
+  return t('Настройки кнопки уже существуют в конфигурации.');
+}

@@ -4,6 +4,12 @@ all_reviews_url: '/vse-otzyvy'
 show_rating: true
 show_date: true
 show_city: true
+btn_text: 'Все отзывы'
+btn_bg_start: '#0780bf'
+btn_bg_end: '#107286'
+btn_text_color: '#ffffff'
+btn_hover_bg: '#ca9210'
+btn_border_radius: 2
 color_accent: '#157fed'
 color_author_text: '#333333'
 color_review_text: '#333333'

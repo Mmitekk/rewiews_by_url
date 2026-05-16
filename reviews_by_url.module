@@ -23,6 +23,7 @@ function reviews_by_url_theme($existing, $type, $theme, $path) {
         'show_date' => FALSE,
         'show_city' => FALSE,
         'all_reviews_url' => '',
+        'btn_text' => '',
         'empty_message' => '',
         'pager' => [],
         'show_all_mode' => FALSE,

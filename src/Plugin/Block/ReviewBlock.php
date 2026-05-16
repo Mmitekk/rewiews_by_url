@@ -173,6 +173,9 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
       $all_reviews_url = '';
     }
 
+    // Get button text with fallback.
+    $btn_text = $config->get('btn_text') ?: 'Все отзывы';
+
     $build = [
       '#theme' => 'reviews_by_url_block',
       '#title' => $config->get('block_title') ?: '',
@@ -181,6 +184,7 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
       '#show_date' => $config->get('show_date') ? TRUE : FALSE,
       '#show_city' => $config->get('show_city') ? TRUE : FALSE,
       '#all_reviews_url' => $all_reviews_url,
+      '#btn_text' => $btn_text,
       '#empty_message' => '',
       '#pager' => [],
       '#show_all_mode' => FALSE,
@@ -247,6 +251,7 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
       '#show_date' => $config->get('show_date') ? TRUE : FALSE,
       '#show_city' => $config->get('show_city') ? TRUE : FALSE,
       '#all_reviews_url' => '',
+      '#btn_text' => '',
       '#empty_message' => '',
       '#pager' => $pager,
       '#show_all_mode' => TRUE,
@@ -416,6 +421,7 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
       '#show_date' => FALSE,
       '#show_city' => FALSE,
       '#all_reviews_url' => '',
+      '#btn_text' => '',
       '#empty_message' => $empty_message,
       '#pager' => [],
       '#show_all_mode' => FALSE,
@@ -751,6 +757,8 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
   /**
    * Builds CSS custom properties string from module configuration.
    *
+   * Includes button-specific variables that are consumed by the CSS file.
+   *
    * @param \Drupal\Core\Config\ImmutableConfig $config
    *   The module configuration.
    *
@@ -768,6 +776,12 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
       '--review-color-card-bg' => $config->get('color_card_bg') ?: '#ffffff',
       '--review-color-card-border' => $config->get('color_card_border') ?: '#157fed',
       '--review-color-section-bg' => $config->get('color_section_bg') ?: '#f2f2f2',
+      // Button variables.
+      '--review-color-btn-bg' => $config->get('btn_bg_start') ?: '#0780bf',
+      '--review-color-btn-bg-end' => $config->get('btn_bg_end') ?: '#107286',
+      '--review-color-btn-text' => $config->get('btn_text_color') ?: '#ffffff',
+      '--review-color-btn-hover' => $config->get('btn_hover_bg') ?: '#ca9210',
+      '--review-btn-radius' => ($config->get('btn_border_radius') !== NULL ? $config->get('btn_border_radius') : 2) . 'px',
     ];
 
     $parts = [];

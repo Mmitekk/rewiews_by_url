@@ -20,6 +20,24 @@ reviews_by_url.settings:
     show_city:
       type: boolean
       label: 'Показывать город'
+    btn_text:
+      type: string
+      label: 'Текст кнопки «Все отзывы»'
+    btn_bg_start:
+      type: string
+      label: 'Цвет фона кнопки (начало градиента)'
+    btn_bg_end:
+      type: string
+      label: 'Цвет фона кнопки (конец градиента)'
+    btn_text_color:
+      type: string
+      label: 'Цвет текста кнопки'
+    btn_hover_bg:
+      type: string
+      label: 'Цвет фона кнопки при наведении'
+    btn_border_radius:
+      type: integer
+      label: 'Скругление углов кнопки (px)'
     color_accent:
       type: string
       label: 'Акцентный цвет (синий)'

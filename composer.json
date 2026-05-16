@@ -29,7 +29,7 @@
   "extra": {
     "drupal": {
       "packageName": "mmitekk/reviews_by_url",
-      "version": "1.4.2",
+      "version": "1.5.0",
       "security-coverage": {
         "status": "not-covered",
         "message": "Покрытие безопасность не проверяется для этого модуля."
