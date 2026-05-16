@@ -63,6 +63,11 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
   const REVIEWS_PER_PAGE = 12;
 
   /**
+   * Default URL for the "All Reviews" page.
+   */
+  const DEFAULT_ALL_REVIEWS_URL = '/vse-otzyvy';
+
+  /**
    * Constructs a ReviewBlock object.
    */
   public function __construct(
@@ -156,7 +161,11 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
     $items = $this->buildReviewItems($review_items, $config);
 
     // Get URL for "All Reviews" button.
-    $all_reviews_url = $config->get('all_reviews_url') ?: '';
+    // Fallback to default if config key is missing (e.g. after update from 1.0.0).
+    $all_reviews_url = $config->get('all_reviews_url');
+    if ($all_reviews_url === NULL || $all_reviews_url === '') {
+      $all_reviews_url = self::DEFAULT_ALL_REVIEWS_URL;
+    }
 
     // Hide the "All Reviews" link when we are already on that page
     // (including pagination paths like /vse-otzyvy/page/2).
@@ -406,6 +415,7 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
       '#show_rating' => FALSE,
       '#show_date' => FALSE,
       '#show_city' => FALSE,
+      '#all_reviews_url' => '',
       '#empty_message' => $empty_message,
       '#pager' => [],
       '#show_all_mode' => FALSE,

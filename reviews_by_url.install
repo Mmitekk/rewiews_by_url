@@ -21,3 +21,15 @@ function reviews_by_url_uninstall() {
   // Clean up any module-specific variables or data.
   // Configuration is automatically removed by Drupal.
 }
+
+/**
+ * Add all_reviews_url config key if missing (update from 1.0.0).
+ */
+function reviews_by_url_update_10001() {
+  $config = \Drupal::configFactory()->getEditable('reviews_by_url.settings');
+  if ($config->get('all_reviews_url') === NULL) {
+    $config->set('all_reviews_url', '/vse-otzyvy')->save();
+    return t('Добавлен ключ all_reviews_url в конфигурацию модуля (значение по умолчанию: /vse-otzyvy).');
+  }
+  return t('Ключ all_reviews_url уже существует в конфигурации.');
+}
