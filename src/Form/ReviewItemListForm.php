@@ -118,7 +118,7 @@ class ReviewItemListForm extends FormBase {
     ];
 
     // Add operations column header.
-    $header += parent::buildHeader() ?? [];
+    $header['operations'] = $this->t('Операции');
 
     $entities = $this->loadFilteredEntities($search, $url_filter, $status_filter);
     $rows = [];
