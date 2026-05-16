@@ -146,15 +146,35 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
         }
       }
 
+      // Generate author initials for avatar.
+      $author_name = $review_item->getAuthorName();
+      $initials = '';
+      $name_parts = preg_split('/\s+/', trim($author_name));
+      foreach ($name_parts as $part) {
+        if (!empty($part)) {
+          $initials .= mb_strtoupper(mb_substr($part, 0, 1));
+        }
+        if (mb_strlen($initials) >= 2) {
+          break;
+        }
+      }
+      if (empty($initials)) {
+        $initials = '?';
+      }
+
       $items[] = [
         'id' => $review_item->id(),
-        'author_name' => $review_item->getAuthorName(),
+        'author_name' => $author_name,
+        'author_initials' => $initials,
         'review_text' => \Drupal::service('renderer')->renderPlain($review_render),
         'rating' => $review_item->getRating(),
         'city' => $config->get('show_city') ? $review_item->getCity() : '',
         'date' => $review_date,
       ];
     }
+
+    // Get URL for "All Reviews" button.
+    $all_reviews_url = $config->get('all_reviews_url') ?: '';
 
     $build = [
       '#theme' => 'reviews_by_url_block',
@@ -163,6 +183,7 @@ class ReviewBlock extends BlockBase implements ContainerFactoryPluginInterface {
       '#show_rating' => $config->get('show_rating') ? TRUE : FALSE,
       '#show_date' => $config->get('show_date') ? TRUE : FALSE,
       '#show_city' => $config->get('show_city') ? TRUE : FALSE,
+      '#all_reviews_url' => $all_reviews_url,
       '#empty_message' => '',
       '#css_variables' => $this->buildCssVariables($config),
       '#attached' => [

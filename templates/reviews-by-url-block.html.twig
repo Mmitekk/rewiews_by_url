@@ -8,6 +8,7 @@
  * - items: Array of review items, each containing:
  *   - id: The review item ID.
  *   - author_name: The author name.
+ *   - author_initials: The author initials (1-2 chars) for avatar.
  *   - review_text: The rendered review HTML.
  *   - rating: The rating value (1-5).
  *   - city: The city name (or empty string).
@@ -15,6 +16,7 @@
  * - show_rating: Whether to display star ratings.
  * - show_date: Whether to display review dates.
  * - show_city: Whether to display city.
+ * - all_reviews_url: URL for "All Reviews" button (or empty).
  * - empty_message: Message to show when no items found.
  * - css_variables: Inline CSS custom properties string from module config.
  */
@@ -23,38 +25,55 @@
 {% if items is not empty %}
   <div class="reviews-by-url-wrapper" style="{{ css_variables }}">
     <div class="reviews-by-url-container">
-      {% if title %}
-        <h2 class="reviews-by-url-title">{{ title }}</h2>
-      {% endif %}
 
+      {# Header: Title + "All Reviews" button #}
+      <div class="reviews-by-url-header">
+        {% if title %}
+          <h2 class="reviews-by-url-title">{{ title }}</h2>
+        {% endif %}
+        {% if all_reviews_url %}
+          <a href="{{ all_reviews_url }}" class="reviews-by-url-all-btn">Все отзывы</a>
+        {% endif %}
+      </div>
+
+      {# Review cards #}
       <div class="reviews-by-url-list">
         {% for item in items %}
           <div class="reviews-by-url-card" data-review-id="{{ item.id }}">
-            <div class="reviews-by-url-card__header">
-              <div>
-                <span class="reviews-by-url-card__author">{{ item.author_name }}</span>
-                {% if show_city and item.city %}
-                  <span class="reviews-by-url-card__city">{{ item.city }}</span>
+
+            {# Top: Avatar + Info #}
+            <div class="reviews-by-url-card__top">
+              <div class="reviews-by-url-card__avatar" aria-hidden="true">
+                {{ item.author_initials }}
+              </div>
+              <div class="reviews-by-url-card__info">
+                <div class="reviews-by-url-card__name-row">
+                  <div>
+                    <span class="reviews-by-url-card__author">{{ item.author_name }}</span>
+                    {% if show_city and item.city %}
+                      <span class="reviews-by-url-card__city">{{ item.city }}</span>
+                    {% endif %}
+                  </div>
+                  {% if show_rating %}
+                    <div class="reviews-by-url-card__rating" aria-label="Рейтинг: {{ item.rating }} из 5">
+                      {% for i in 1..5 %}
+                        {% if i <= item.rating %}
+                          <span class="reviews-by-url-card__star" aria-hidden="true">★</span>
+                        {% else %}
+                          <span class="reviews-by-url-card__star reviews-by-url-card__star--empty" aria-hidden="true">★</span>
+                        {% endif %}
+                      {% endfor %}
+                      <span class="reviews-by-url-card__rating-value">{{ item.rating }}</span>
+                    </div>
+                  {% endif %}
+                </div>
+                {% if show_date and item.date %}
+                  <div class="reviews-by-url-card__date">{{ item.date }}</div>
                 {% endif %}
               </div>
-              {% if show_rating %}
-                <div class="reviews-by-url-card__rating" aria-label="Рейтинг: {{ item.rating }} из 5">
-                  {% for i in 1..5 %}
-                    {% if i <= item.rating %}
-                      <span class="reviews-by-url-card__star" aria-hidden="true"></span>
-                    {% else %}
-                      <span class="reviews-by-url-card__star reviews-by-url-card__star--empty" aria-hidden="true"></span>
-                    {% endif %}
-                  {% endfor %}
-                  <span class="reviews-by-url-card__rating-value">{{ item.rating }}</span>
-                </div>
-              {% endif %}
             </div>
 
-            {% if show_date and item.date %}
-              <div class="reviews-by-url-card__date">{{ item.date }}</div>
-            {% endif %}
-
+            {# Review text #}
             <div class="reviews-by-url-card__text">
               {{ item.review_text|raw }}
             </div>

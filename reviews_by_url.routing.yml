@@ -1,7 +1,7 @@
 entity.review_item.collection:
   path: '/admin/config/content/reviews-by-url'
   defaults:
-    _entity_list: 'review_item'
+    _form: '\Drupal\reviews_by_url\Form\ReviewItemListForm'
     _title: 'Отзывы (Reviews by URL)'
   requirements:
     _permission: 'administer reviews by url'

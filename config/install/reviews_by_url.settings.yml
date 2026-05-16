@@ -1,5 +1,6 @@
 block_title: 'Отзывы'
 empty_message: ''
+all_reviews_url: '/vse-otzyvy'
 show_rating: true
 show_date: true
 show_city: true
@@ -10,5 +11,5 @@ color_border: '#eeeeee'
 color_date_text: '#999999'
 color_star: '#d89c11'
 color_card_bg: '#ffffff'
-color_card_border: '#157fed'
+color_card_border: '#eeeeee'
 color_section_bg: '#f2f2f2'

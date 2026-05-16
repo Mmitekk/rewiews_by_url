@@ -8,6 +8,9 @@ reviews_by_url.settings:
     empty_message:
       type: string
       label: 'Сообщение при отсутствии отзывов'
+    all_reviews_url:
+      type: string
+      label: 'URL страницы «Все отзывы»'
     show_rating:
       type: boolean
       label: 'Показывать рейтинг (звёзды)'

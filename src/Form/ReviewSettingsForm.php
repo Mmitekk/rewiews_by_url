@@ -52,6 +52,15 @@ class ReviewSettingsForm extends ConfigFormBase {
       '#maxlength' => 255,
     ];
 
+    $form['general']['all_reviews_url'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('URL страницы «Все отзывы»'),
+      '#description' => $this->t('Внутренний путь страницы со всеми отзывами (например, /vse-otzyvy). На эту страницу будет вести кнопка «Все отзывы». Оставьте пустым, чтобы скрыть кнопку.'),
+      '#default_value' => $config->get('all_reviews_url') ?? '/vse-otzyvy',
+      '#maxlength' => 255,
+      '#placeholder' => '/vse-otzyvy',
+    ];
+
     $form['general']['show_rating'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Показывать рейтинг (звёзды)'),
@@ -138,10 +147,10 @@ class ReviewSettingsForm extends ConfigFormBase {
 
     $form['colors']['color_card_border'] = [
       '#type' => 'color',
-      '#title' => $this->t('Цвет бордюра карточки'),
-      '#description' => $this->t('Цвет акцентной линии на карточке (сверху на мобильных, слева на десктопе).'),
-      '#default_value' => $config->get('color_card_border') ?? '#157fed',
-      '#attributes' => ['placeholder' => '#157fed'],
+      '#title' => $this->t('Цвет обводки карточки'),
+      '#description' => $this->t('Цвет рамки карточки отзыва.'),
+      '#default_value' => $config->get('color_card_border') ?? '#eeeeee',
+      '#attributes' => ['placeholder' => '#eeeeee'],
     ];
 
     $form['colors']['color_section_bg'] = [
@@ -162,6 +171,7 @@ class ReviewSettingsForm extends ConfigFormBase {
     $this->config('reviews_by_url.settings')
       ->set('block_title', $form_state->getValue('block_title'))
       ->set('empty_message', $form_state->getValue('empty_message'))
+      ->set('all_reviews_url', $form_state->getValue('all_reviews_url'))
       ->set('show_rating', $form_state->getValue('show_rating'))
       ->set('show_date', $form_state->getValue('show_date'))
       ->set('show_city', $form_state->getValue('show_city'))
