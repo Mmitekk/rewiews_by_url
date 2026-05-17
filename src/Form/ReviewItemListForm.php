@@ -78,7 +78,7 @@ class ReviewItemListForm extends FormBase {
     $form['filters']['url_filter'] = [
       '#type' => 'textfield',
       '#title' => $this->t('URL страницы'),
-      '#placeholder' => $this->t('/catalog/metallocherepitsa'),
+      '#placeholder' => $this->t('/catalog/metallocherepitsa или <front>'),
       '#default_value' => $url_filter,
       '#size' => 30,
     ];
@@ -235,25 +235,42 @@ class ReviewItemListForm extends FormBase {
     // is a multi-value string field and we need substring matching.
     if (!empty($url_filter)) {
       $url_filter_normalized = trim($url_filter);
-      if (!str_starts_with($url_filter_normalized, '/')) {
-        $url_filter_normalized = '/' . $url_filter_normalized;
-      }
+
+      // Build a list of all URL variants that should match this filter.
+      // For <front>, we also match the real front page path and its alias.
+      $filter_variants = $this->getUrlFilterVariants($url_filter_normalized);
 
       $filtered = [];
       foreach ($entities as $entity) {
         $item_urls = $entity->getUrls();
         foreach ($item_urls as $item_url) {
-          // Exact or partial match.
-          if ($item_url === $url_filter_normalized || str_contains($item_url, $url_filter_normalized)) {
-            $filtered[$entity->id()] = $entity;
-            break;
+          $item_url_trimmed = trim($item_url);
+
+          // Normalize item URL (add leading slash unless it's <front>).
+          $item_url_normalized = $item_url_trimmed;
+          if ($item_url_trimmed !== '<front>' && !str_starts_with($item_url_trimmed, '/')) {
+            $item_url_normalized = '/' . $item_url_trimmed;
           }
-          // Also check wildcard patterns.
-          if (str_ends_with($item_url, '/*')) {
-            $base_path = rtrim(substr($item_url, 0, -2), '/');
-            if ($url_filter_normalized === $base_path || str_starts_with($url_filter_normalized, $base_path . '/')) {
+
+          // Check each filter variant against the item URL.
+          foreach ($filter_variants as $variant) {
+            // Exact match.
+            if ($item_url_normalized === $variant || $item_url_trimmed === $variant) {
               $filtered[$entity->id()] = $entity;
-              break;
+              break 2;
+            }
+            // Partial/substring match.
+            if (str_contains($item_url_normalized, $variant) || str_contains($item_url_trimmed, $variant)) {
+              $filtered[$entity->id()] = $entity;
+              break 2;
+            }
+            // Wildcard patterns in item URL (e.g. /catalog/*).
+            if (str_ends_with($item_url_normalized, '/*')) {
+              $base_path = rtrim(substr($item_url_normalized, 0, -2), '/');
+              if ($variant === $base_path || str_starts_with($variant, $base_path . '/')) {
+                $filtered[$entity->id()] = $entity;
+                break 2;
+              }
             }
           }
         }
@@ -262,6 +279,70 @@ class ReviewItemListForm extends FormBase {
     }
 
     return $entities;
+  }
+
+  /**
+   * Builds a list of URL filter variants from a user-supplied filter string.
+   *
+   * Handles special cases like <front> which maps to the real front page
+   * path and its alias. For regular URLs, normalizes the leading slash.
+   *
+   * @param string $url_filter
+   *   The raw URL filter value entered by the user.
+   *
+   * @return string[]
+   *   Array of URL strings that should all match this filter.
+   */
+  protected function getUrlFilterVariants($url_filter) {
+    $variants = [];
+
+    // <front> is a special Drupal token for the home page.
+    if ($url_filter === '<front>') {
+      // Match the literal <front> token.
+      $variants[] = '<front>';
+
+      // Resolve <front> to the real system path (e.g. /node or /home).
+      $front_path = \Drupal::config('system.site')->get('page.front');
+      if (!empty($front_path)) {
+        if (!str_starts_with($front_path, '/')) {
+          $front_path = '/' . $front_path;
+        }
+        $variants[] = $front_path;
+
+        // Also add the URL alias for the front page path.
+        try {
+          $alias = \Drupal::service('path_alias.manager')->getAliasByPath($front_path);
+          if ($alias !== $front_path) {
+            $variants[] = $alias;
+          }
+        } catch (\InvalidArgumentException $e) {
+          // Skip.
+        }
+      }
+      return $variants;
+    }
+
+    // Regular URL: normalize leading slash.
+    $normalized = $url_filter;
+    if (!str_starts_with($normalized, '/')) {
+      $normalized = '/' . $normalized;
+    }
+    $variants[] = $normalized;
+
+    // Also check if the filter is an alias and add the system path.
+    try {
+      $system_path = \Drupal::service('path_alias.manager')->getPathByAlias($normalized);
+      if (!str_starts_with($system_path, '/')) {
+        $system_path = '/' . $system_path;
+      }
+      if ($system_path !== $normalized) {
+        $variants[] = $system_path;
+      }
+    } catch (\InvalidArgumentException $e) {
+      // Skip.
+    }
+
+    return $variants;
   }
 
   /**
